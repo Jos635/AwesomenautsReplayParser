@@ -1,0 +1,141 @@
+Function for calculating number of bits needed:
+function(number = 12, NotOneBitMore = false)
+{
+	if(!NotOneBitMore)
+	{
+		edx = 1
+	}else{
+		edx = 0
+	}
+
+	ecx >>= 1
+	eax = 1
+
+	if(ecx != 0)
+	{
+		do
+		{
+			eax++
+			ecx >>= 1
+		} while(ecx != 0)
+	}
+	
+	return eax + edx
+}
+
+
+ReplaySettingsObject:
+
+08: float
+0c: float
+10: float
+32: file version
+
+00 0 							1024
+10 1730 -> 1730 	(10.0044)	896
+20 3673 -> 1943 	(09.9920)	1664
+30 5596 -> 1923 	(10.0084)	1408
+40 7538 -> 1942 	(09.9915)	3072
+50 9477 -> 1939		(10.0081)	2816
+
+ReplayData:
+
+PARTIAL listelement1
+{
+	1 bit:	bool
+	if bool
+	{
+		13 bits:	subcount
+		for i = 0; i < subcount; i++
+		{
+			9 bits:		unknown
+			16 bits:	unknown
+		}
+	}
+}
+
+PARTIAL listelement2
+{
+	1 bit:	bool
+	if bool
+	{
+		13 bits:	subcount
+
+		for i = 0; i < subcount; i++
+		{
+			16? bits: number
+		}
+	}
+}
+
+PARTIAL ExpandableNumber
+{
+	1 bit:		toggle
+	(18 - toggle * 10) bits: unknown
+	5 bits:		unknown
+	1 bit:		bool
+}
+
+file
+{
+	16 bits:	version
+	16 bits:	replay position
+	1 bit:		unknown
+	2 bits:		unknown
+	16 bits:	count
+
+	for n = 0; n < count; n++
+	{
+		16 bits:	float
+		16 bits:	float
+
+		<ExpandableNumber>
+		
+		<ListElement1>
+
+		4 bits: subcount
+		for int i = 0; i < subcount; i++
+		{
+			16 bits:	unknown
+			16? bits:	unknown
+
+			2 bits: 	num1
+			1 bit:		unknown
+
+			1 bit:		bool
+			1 bit:		bool
+			1 bit:		bool
+			1 bit:		bool
+
+			if num1 > 4
+			{
+				1 bit:		bool
+			}
+
+			1 bit:		bool
+
+			16? bits:	unknown
+			16? bits:	unknown
+
+			16? bits:	unknown
+			16? bits:	unknown
+
+			ASCII string playername
+			ASCII string playerclass
+
+			<ListElement2>
+			<ListElement2>
+			<ListElement2>
+			<ListElement2>
+
+			<ListElement1>
+			<ListElement1>
+			<ListElement1>
+			<ListElement1>
+
+			3 bits: unknown
+
+			<ExpandableNumber>
+		}
+	}
+}
