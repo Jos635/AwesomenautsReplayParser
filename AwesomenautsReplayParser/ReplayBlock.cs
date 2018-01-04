@@ -125,7 +125,7 @@ namespace AwesomenautsReplayParser
                 var f3 = b.ReadFloat(7, 0, 10);
 
                 var u1 = b.ReadUInt(12);
-                var u2 = b.ReadUInt(13);
+                var u2 = b.ReadUInt(14);
 
                 ReadPositionVotList(b, 5, 8);
                 ReadFloatVotList(b, 5, 6, 0, 1);
@@ -464,7 +464,15 @@ namespace AwesomenautsReplayParser
 
             for (var i = 0; i < count; i++)
             {
-                throw new Exception();
+                var u1 = b.ReadUInt(4);
+                var f1 = ReadTimePoint(b);
+                var f2 = ReadTimePoint(b);
+
+                ReadUIntVotList(b, 2, 14);
+                ReadUIntVotList(b, 2, 14);
+
+                var f3 = b.ReadFloat(2, 0.01, 0.02);
+                var f4 = b.ReadFloat(2, 0.005, 0.01);
             }
         }
 
@@ -567,7 +575,7 @@ namespace AwesomenautsReplayParser
 
         private void ReadFilePart0(BitStream b)
         {
-            ReadUIntVotList(b, 2, 5);
+            ReadUIntVotList(b, 2, 5); // These are maybe floats?
             ReadUIntVotList(b, 4, 14);
             ReadUIntVotList(b, 2, 14);
             ReadUIntVotList(b, 2, 5);
