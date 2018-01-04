@@ -40,7 +40,7 @@ namespace ReplayViewer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             replayCanvas.TimePoint = new AbsoluteTime(31);
-            replayCanvas.Replay = new Replay(new DirectoryInfo("r1"));
+            replayCanvas.Replay = new Replay(new DirectoryInfo("r2"));
             replayCanvas.InvalidateVisual();
 
             timer = new Timer(new TimerCallback(Tick), null, 0, 50);

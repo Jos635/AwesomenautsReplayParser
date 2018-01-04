@@ -66,10 +66,15 @@ namespace AwesomenautsReplayParser
         public Vot<Position> ReadPositionVotList(BitStream stream, int countSize, int valueSize)
             => ReadVotList(stream, countSize, () =>
             {
-                var x = stream.ReadFloat(valueSize, -10, 20);
-                var y = stream.ReadFloat(valueSize, -10, 30);
-                return new Position(x, y);
+                return ReadPosition(stream, valueSize);
             });
+
+        public Position ReadPosition(BitStream stream, int valueSize)
+        {
+            var x = stream.ReadFloat(valueSize, -10, 20);
+            var y = stream.ReadFloat(valueSize, -10, 30);
+            return new Position(x, y);
+        }
 
         public Vot<uint> ReadUIntVotList(BitStream stream, int countSize, int valueSize)
             => ReadVotList(stream, countSize, () => stream.ReadUInt(valueSize));

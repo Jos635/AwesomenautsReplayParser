@@ -52,6 +52,7 @@
     <Compile Include="Model\Position.cs" />
     <Compile Include="Model\TimePoint.cs" />
     <Compile Include="Model\TimeRange.cs" />
+    <Compile Include="Model\TurretEntity.cs" />
     <Compile Include="Model\Vot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

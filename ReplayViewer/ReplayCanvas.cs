@@ -36,6 +36,11 @@ namespace ReplayViewer
                 {
                     RenderCharacter(dc, relativeTime, character);
                 }
+
+                foreach(var turret in block.Turrets)
+                {
+                    RenderTurret(dc, relativeTime, turret);
+                }
             }
         }
 
@@ -61,11 +66,44 @@ namespace ReplayViewer
             }
         }
 
+        private void RenderTurret(DrawingContext dc, TimePoint time, TurretEntity turret)
+        {
+            var point = TransformPoint(turret.Position);
+            var brush = Brushes.Gray;
+            var aim = turret.Aim[time];
+
+            if (turret.TeamId == 0)
+            {
+                brush = Brushes.Red;
+            }
+            else if (turret.TeamId == 1)
+            {
+                brush = Brushes.Blue;
+                aim -= 180;
+            }
+
+            dc.DrawRectangle(brush, null, new Rect(point.X - 5, point.Y - 10, 10, 20));
+            dc.DrawLine(new Pen(Brushes.Black, 3), point, AddAim(point, aim, 10));
+        }
+
+        private Point AddAim(Point basePoint, double direction, double length)
+        {
+            return new Point(
+                basePoint.X + Math.Cos(DegreeToRadian(direction)) * length,
+                basePoint.Y + -Math.Sin(DegreeToRadian(direction)) * length
+            );
+        }
+
+        private static double DegreeToRadian(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
+
         private Point TransformPoint(Position pos)
         {
             var x = (pos.X + 10) / 30.0 * ActualWidth;
             var y = (1 - (pos.Y + 10) / 40.0) * ActualHeight;
-
+            
             return new Point(x, y);
         }
 

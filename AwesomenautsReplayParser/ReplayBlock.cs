@@ -16,6 +16,7 @@ namespace AwesomenautsReplayParser
         public uint VersionNumber { get; }
 
         public List<CharacterEntity> Characters { get; } = new List<CharacterEntity>();
+        public List<TurretEntity> Turrets { get; } = new List<TurretEntity>();
 
         public ReplayBlock(FileInfo file)
 		{
@@ -321,26 +322,31 @@ namespace AwesomenautsReplayParser
             for(var i = 0; i < count; i++)
             {
                 ReadTimeRange(b);
-
                 ReadHeader(b);
 
-                var u1 = b.ReadUInt(2);
+                var teamId = b.ReadUInt(2);
                 var f3 = b.ReadFloat(8, 0, 30000);
 
                 ReadFloatVotList(b, 8, 7, 0, 30000);
                 ReadFloatVotList(b, 8, 4, 0, 1);
 
-                var f4 = b.ReadFloat(13, -10.0, 20.0);
-                var f5 = b.ReadFloat(13, -10.0, 30.0);
+                var position = ReadPosition(b, 13);
                 var f6 = b.ReadFloat(8, 0, 1.5);
 
                 ReadUIntVotList(b, 3, 14);
-                ReadFloatVotList(b, 8, 7, 0, 360);
+                var aim = ReadFloatVotList(b, 8, 7, 0, 360);
 
                 ReadVoidVotList(b, 4);
 
                 var f7 = b.ReadFloat(6, 0, 1.5);
                 ReadUIntVotList(b, 5, 14);
+
+                Turrets.Add(new TurretEntity
+                {
+                    Position = position,
+                    Aim = aim,
+                    TeamId = teamId,
+                });
             }
         }
 
