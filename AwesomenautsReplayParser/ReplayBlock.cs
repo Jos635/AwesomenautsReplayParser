@@ -41,11 +41,11 @@ namespace AwesomenautsReplayParser
             Console.WriteLine(b.ReadUInt(2));
 
             ReadFilePart0(b);
-            ReadFilePart1(b);
-            ReadFilePart2(b);
-            ReadFilePart3(b);
-            ReadFilePart4(b);
-            ReadFilePart5(b);
+            ReadCharacters(b);
+            ReadTurrets(b);
+            ReadBases(b);
+            ReadTiledAnimations(b);
+            ReadLasers(b);
             ReadFilePart6(b);
             ReadFilePart7(b);
             ReadFilePart8(b);
@@ -54,10 +54,10 @@ namespace AwesomenautsReplayParser
             ReadFilePart11(b);
             ReadFilePart12(b);
             ReadFilePart13(b);
-            ReadFilePart14(b);
+            ReadElectrocuteStrikes(b);
         }
 
-        private void ReadFilePart14(BitStream b)
+        private void ReadElectrocuteStrikes(BitStream b)
         {
             var count = b.ReadUInt(10);
 
@@ -125,7 +125,14 @@ namespace AwesomenautsReplayParser
                 var f3 = b.ReadFloat(7, 0, 10);
 
                 var u1 = b.ReadUInt(12);
-                var u2 = b.ReadUInt(14);
+                if (VersionNumber <= 0x1f) // TODO: Maybe 0x1e?
+                {
+                    var u2 = b.ReadUInt(13);
+                }
+                else
+                {
+                    var u2 = b.ReadUInt(14);
+                }
 
                 ReadPositionVotList(b, 5, 8);
                 ReadFloatVotList(b, 5, 6, 0, 1);
@@ -140,6 +147,8 @@ namespace AwesomenautsReplayParser
 
             for (var i = 0; i < count; i++)
             {
+                // "hidingmid". Invisible areas?
+
                 var str = b.ReadString();
                 ReadVoidVotList(b, 5);
             }
@@ -242,7 +251,7 @@ namespace AwesomenautsReplayParser
             }
         }
 
-        private void ReadFilePart5(BitStream b)
+        private void ReadLasers(BitStream b)
         {
             var count = b.ReadUInt(6);
 
@@ -264,7 +273,7 @@ namespace AwesomenautsReplayParser
             }
         }
 
-        private void ReadFilePart4(BitStream b)
+        private void ReadTiledAnimations(BitStream b)
         {
             var count = b.ReadUInt(5);
 
@@ -283,7 +292,7 @@ namespace AwesomenautsReplayParser
             }
         }
 
-        private void ReadFilePart3(BitStream b)
+        private void ReadBases(BitStream b)
         {
             var count = b.ReadUInt(3);
 
@@ -297,7 +306,7 @@ namespace AwesomenautsReplayParser
                 ReadFloatVotList(b, 8, 7, 0, 30000);
                 ReadFloatVotList(b, 8, 4, 0, 1);
 
-                var f2 = b.ReadFloat(13, -10, 20);
+                var f2 = b.ReadFloat(13, -10, 20); // Possibly the position?
                 var f3 = b.ReadFloat(13, -10, 30);
                 var f4 = b.ReadFloat(8, 0, 1.5);
 
@@ -305,7 +314,7 @@ namespace AwesomenautsReplayParser
             }
         }
 
-        private void ReadFilePart2(BitStream b)
+        private void ReadTurrets(BitStream b)
         {
             var count = b.ReadUInt(6);
 
@@ -336,7 +345,7 @@ namespace AwesomenautsReplayParser
         }
 
         #region Part 1
-        private void ReadFilePart1(BitStream b)
+        private void ReadCharacters(BitStream b)
         {
             var numItems = b.ReadUInt(16);
             for(var i = 0; i < numItems; i++)
@@ -380,21 +389,23 @@ namespace AwesomenautsReplayParser
                     var characterName = b.ReadString();
 
                     var b7 = b.ReadBool();
-
+                    
                     var b8 = b.ReadBool();
                     if(b8) // correct until here
                     { 
-                        ReadUIntVotList(b, 5, 14);
+                        ReadUIntVotList(b, 5, 14); // Possibly reading floats between -1 and 10000000000
                         ReadUIntVotList(b, 5, 14);
                         ReadUIntVotList(b, 5, 14);
                         ReadUIntVotList(b, 5, 14);
 
-                        ReadUIntVotList(b, 5, 8);// Floats!
-                        ReadUIntVotList(b, 5, 8);
-                        ReadUIntVotList(b, 5, 8);
-                        ReadUIntVotList(b, 5, 7);
-                        ReadUIntVotList(b, 5, 7);
-                        ReadUIntVotList(b, 5, 7);
+                        // Health is probably stored in 7 bits.
+
+                        ReadFloatVotList(b, 5, 8, 0, 20);
+                        ReadFloatVotList(b, 5, 8, 0, 20);
+                        ReadFloatVotList(b, 5, 8, 0, 20);
+                        ReadFloatVotList(b, 5, 7, 0, 1);
+                        ReadFloatVotList(b, 5, 7, 0, 1);
+                        ReadFloatVotList(b, 5, 7, 0, 1);
 
                         ReadIntVotList(b, 5, 5);
                         ReadIntVotList(b, 5, 5);
@@ -428,8 +439,8 @@ namespace AwesomenautsReplayParser
                     ReadFilePart1_2(b);
                     ReadFilePart1_3(b);
                     ReadFilePart1_4(b);
-                    ReadFilePart1_5(b);
-                    ReadFilePart1_6(b);
+                    ReadBowStrings(b);
+                    ReadStatusEffectIcons(b);
 
                     Characters.Add(new CharacterEntity(userName, characterName)
                     {
@@ -442,7 +453,7 @@ namespace AwesomenautsReplayParser
             }
         }
 
-        private void ReadFilePart1_6(BitStream b)
+        private void ReadStatusEffectIcons(BitStream b)
         {
             var count = b.ReadUInt(6);
 
@@ -458,7 +469,7 @@ namespace AwesomenautsReplayParser
             }
         }
 
-        private void ReadFilePart1_5(BitStream b)
+        private void ReadBowStrings(BitStream b)
         {
             var count = b.ReadUInt(2);
 
@@ -556,6 +567,8 @@ namespace AwesomenautsReplayParser
         {
             var count = b.ReadUInt(3);
 
+            // Gnaw's weedlings, voltar's healbots, leon's tongue?
+
             for(var i = 0; i < count; i++)
             {
                 var n = ReadVoidVotList(b, 2);
@@ -575,6 +588,8 @@ namespace AwesomenautsReplayParser
 
         private void ReadFilePart0(BitStream b)
         {
+            // According to https://joostdevblog.blogspot.nl/2014/01/bitcrunching-numbers-for-bandwidth.html
+            // - Solar is 14 bits
             ReadUIntVotList(b, 2, 5); // These are maybe floats?
             ReadUIntVotList(b, 4, 14);
             ReadUIntVotList(b, 2, 14);

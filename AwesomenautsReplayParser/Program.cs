@@ -11,7 +11,8 @@ namespace AwesomenautsReplayParser
 	{
 		static void Main(string[] args)
 		{
-			var r = new Replay(new DirectoryInfo("r2"));
+            Console.Write("Enter replay name: ");
+			var r = new Replay(new DirectoryInfo(Console.ReadLine()));
             r.Preload();
 			Console.ReadLine();
 		}
